@@ -23,7 +23,7 @@ export default function SettingsPage() {
       if (!user) return
       const { data } = await supabase.from('users').select('*').eq('id', user.id).single()
       if (data) {
-        setProfile(data)
+        setProfile(data as unknown as User)
         setName(data.name ?? '')
         setBusinessName(data.business_name ?? '')
         setProvince(data.province ?? '')

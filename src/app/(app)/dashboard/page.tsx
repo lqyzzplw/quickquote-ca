@@ -73,11 +73,11 @@ export default async function DashboardPage() {
           </div>
         ) : (
           <div className="divide-y divide-gray-100">
-            {recentQuotes.map((q: any) => (
+            {recentQuotes.map((q) => (
               <Link key={q.id} href={`/quotes/${q.id}`} className="flex items-center justify-between px-4 py-3 hover:bg-gray-50 transition">
                 <div>
                   <p className="text-sm font-medium text-gray-900">{q.title}</p>
-                  <p className="text-xs text-gray-400">{q.clients?.name ?? 'No client'} · {q.quote_number}</p>
+                  <p className="text-xs text-gray-400">{(q as unknown as { clients?: { name: string } }).clients?.name ?? 'No client'} · {q.quote_number}</p>
                 </div>
                 <div className="flex items-center gap-3">
                   <span className="text-sm font-medium text-gray-700">${Number(q.total).toFixed(2)}</span>
