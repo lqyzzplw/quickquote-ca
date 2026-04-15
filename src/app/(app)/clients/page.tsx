@@ -91,10 +91,9 @@ function ClientModal({ client, onClose, onSaved }: { client: Client | null; onCl
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
 
-    const payload = { name, email: email || null, phone: phone || null, address: address || null }
     const { error } = client
-      ? await supabase.from('clients').update(payload).eq('id', client.id)
-      : await supabase.from('clients').insert({ ...payload, user_id: user.id })
+      ? await supabase.from('clients').update({ name, email: email || null, phone: phone || null, address: address || null }).eq('id', client.id)
+      : await supabase.from('clients').insert({ name, email: email || null, phone: phone || null, address: address || null, user_id: user.id })
 
     if (error) { setError(error.message); setLoading(false) }
     else onSaved()
