@@ -1,39 +1,35 @@
 # Project State
 
 ## Current Phase
-**Phase 1 — Auth + Profile + Clients** ✅ Complete (2026-04-14)
-**Next: Phase 2 — AI Parse + Quote Engine + Tax**
+**Phase 2 — AI + Quote Engine** ✅ Complete (2026-04-15)
+**Next: Phase 3 — PDF Generation + Email + Send flow**
 
 ## Overall Progress
 | Phase | Status | % |
 |-------|--------|---|
 | 0 — Scaffold | ✅ Done | 100% |
 | 1 — Auth + Profile + Clients | ✅ Done | 100% |
-| 2 — AI + Quote Engine + Tax | ⬜ Not Started | 0% |
+| 2 — AI + Quote Engine + Tax | ✅ Done | 100% |
 | 3 — PDF + Email + Dashboard | ⬜ Not Started | 0% |
 | 4 — Stripe + Landing + Beta | ⬜ Not Started | 0% |
 | 5 — Launch | ⬜ Not Started | 0% |
 
-## Last Session (2026-04-14)
-- Credentials received: Supabase, Anthropic, Resend all configured in .env.local
-- Supabase project: zncgpsrhocybilzsbmds (ca-central-1)
-- DB migration 001_initial_schema applied (users, clients, quotes, quote_line_items + RLS)
-- Phase 1 shipped: auth pages, onboarding, dashboard, clients CRUD, settings, middleware
-- Canadian tax engine complete (all 13 provinces)
-- Committed + pushed to GitHub
+## Last Session (2026-04-15)
+- Credentials wired into .env.local (Supabase, Anthropic, Resend)
+- DB migration 002: next_quote_number() RPC applied
+- Phase 2 shipped: AI parse endpoint, quote creation flow, quotes list, quote detail
+- Build passes clean — 16 static pages generated
+- Pushed to GitHub (3 commits total)
 
-## What's Next (Phase 2)
-1. `/api/ai/parse` route — Claude Haiku parses free-text → line items
-2. `/quotes/new` page — client selector + free-text input + AI parse flow
-3. Quote line item editor (editable table)
-4. Quote save as draft with QQ-XXXX numbering
-5. `/quotes` list page + `/quotes/[id]` detail page
+## What's Next (Phase 3)
+1. `/api/quotes/[id]/send` route — generate PDF + send via Resend
+2. PDF template with @react-pdf/renderer (logo, line items, tax, quote number)
+3. `/quotes/[id]/send` preview page
+4. Wire "Send to Client" button on quote detail page
+5. Update quote status to "sent" + record sent_at timestamp
+6. Increment quotes_sent_this_month counter for freemium gate
 
-## Credentials in .env.local
-- NEXT_PUBLIC_SUPABASE_URL ✅
-- NEXT_PUBLIC_SUPABASE_ANON_KEY ✅
-- SUPABASE_SERVICE_ROLE_KEY ✅
-- ANTHROPIC_API_KEY ✅
-- KIMI_API_KEY ✅ (backup)
-- RESEND_API_KEY ✅
-- Stripe keys ⬜ (pending — needed for Phase 4)
+## Notes
+- Google OAuth not yet configured (user chose email-only for now)
+- Stripe keys still pending (needed for Phase 4)
+- react-pdf v3.4.4 already installed
