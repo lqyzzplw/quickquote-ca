@@ -1,0 +1,75 @@
+# QuickQuote CA — robots.txt
+# Default: allow all crawlers
+
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /auth/callback
+Disallow: /dashboard
+Disallow: /quotes
+Disallow: /clients
+Disallow: /settings
+Disallow: /onboarding
+Disallow: /upgrade
+
+# AI crawlers — explicitly allowed (public pages only)
+User-agent: GPTBot
+Allow: /
+Disallow: /api/
+Disallow: /auth/callback
+Disallow: /dashboard
+Disallow: /quotes
+Disallow: /clients
+Disallow: /settings
+Disallow: /onboarding
+Disallow: /upgrade
+
+User-agent: ClaudeBot
+Allow: /
+Disallow: /api/
+Disallow: /auth/callback
+Disallow: /dashboard
+Disallow: /quotes
+Disallow: /clients
+Disallow: /settings
+Disallow: /onboarding
+Disallow: /upgrade
+
+User-agent: PerplexityBot
+Allow: /
+Disallow: /api/
+Disallow: /auth/callback
+Disallow: /dashboard
+Disallow: /quotes
+Disallow: /clients
+Disallow: /settings
+Disallow: /onboarding
+Disallow: /upgrade
+
+User-agent: Google-Extended
+Allow: /
+Disallow: /api/
+Disallow: /auth/callback
+Disallow: /dashboard
+Disallow: /quotes
+Disallow: /clients
+Disallow: /settings
+Disallow: /onboarding
+Disallow: /upgrade
+
+User-agent: CCBot
+Allow: /
+Disallow: /api/
+Disallow: /auth/callback
+Disallow: /dashboard
+Disallow: /quotes
+Disallow: /clients
+Disallow: /settings
+Disallow: /onboarding
+Disallow: /upgrade
+
+User-agent: anthropic-ai
+Allow: /
+Disallow: /api/
+
+Sitemap: https://quickquote-ca.vercel.app/sitemap.xml
