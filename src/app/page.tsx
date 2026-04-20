@@ -44,9 +44,122 @@ const TRADES = [
   'Deck Builders', 'Handymen', 'Welders',
 ]
 
+const FAQS = [
+  {
+    q: 'What is QuickQuote CA?',
+    a: 'QuickQuote CA is a mobile-first web app that lets Canadian tradespeople generate professional PDF quotes in under 60 seconds. You describe the job in plain English, the AI breaks it into line items, Canadian taxes are calculated automatically for your province, and the branded PDF is emailed directly to your client.',
+  },
+  {
+    q: 'How much does QuickQuote CA cost?',
+    a: 'Free for 3 quotes per month with every feature included. Pro is $15 CAD per month for unlimited quotes, priority support, and early access to new features. No credit card required to start. Cancel any time.',
+  },
+  {
+    q: 'Does QuickQuote CA handle Canadian sales tax correctly?',
+    a: 'Yes. QuickQuote supports every province and territory: HST for Ontario, New Brunswick, Nova Scotia, Newfoundland, and PEI (13–15%); GST + PST for British Columbia (5% + 7%), Manitoba and Saskatchewan (5% + 6–7%); GST + QST for Quebec (5% + 9.975%); and GST-only for Alberta and the three territories (5%). Tax calculates automatically once you pick your client\u2019s province.',
+  },
+  {
+    q: 'Which trades is it built for?',
+    a: 'Every Canadian trade — general contractors, electricians, plumbers, HVAC technicians, roofers, painters, landscapers, renovators, flooring installers, deck builders, handymen, welders, and more. Anyone who quotes jobs can use it.',
+  },
+  {
+    q: 'Can I use it from my phone?',
+    a: 'Yes. QuickQuote CA is mobile-first and designed for trades to quote on-site from a phone. Works on iOS and Android through any browser — no app install needed.',
+  },
+  {
+    q: 'Does QuickQuote use my data to train AI?',
+    a: 'No. Your quote content, client data, and job descriptions are never used to train AI models. Your data stays in our Canadian Supabase database (ca-central-1) and is only used to provide the service.',
+  },
+  {
+    q: 'How do I send a quote to my client?',
+    a: 'After the AI parses your job description and you review the line items, hit "Send". Your client receives a branded PDF in their inbox instantly — no downloading, no attaching, no printing.',
+  },
+  {
+    q: 'Can I cancel my Pro subscription?',
+    a: 'Yes, any time from the Settings page. Cancellation takes effect at the end of the current billing period and you keep Pro features until then.',
+  },
+]
+
+const SITE_URL = 'https://quickquote-ca.vercel.app'
+
+const JSON_LD = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Organization',
+      '@id': `${SITE_URL}/#organization`,
+      name: 'QuickQuote CA',
+      url: SITE_URL,
+      description: 'AI-powered quote generator for Canadian tradespeople.',
+      areaServed: { '@type': 'Country', name: 'Canada' },
+    },
+    {
+      '@type': 'WebSite',
+      '@id': `${SITE_URL}/#website`,
+      url: SITE_URL,
+      name: 'QuickQuote CA',
+      publisher: { '@id': `${SITE_URL}/#organization` },
+      inLanguage: 'en-CA',
+    },
+    {
+      '@type': 'SoftwareApplication',
+      '@id': `${SITE_URL}/#software`,
+      name: 'QuickQuote CA',
+      applicationCategory: 'BusinessApplication',
+      operatingSystem: 'Web',
+      url: SITE_URL,
+      description: 'Generate professional PDF quotes with correct Canadian tax logic in seconds. Built for contractors, electricians, plumbers, and every Canadian trade.',
+      offers: [
+        {
+          '@type': 'Offer',
+          name: 'Free',
+          price: '0',
+          priceCurrency: 'CAD',
+          description: '3 quotes per month, full feature set.',
+        },
+        {
+          '@type': 'Offer',
+          name: 'Pro',
+          price: '15',
+          priceCurrency: 'CAD',
+          description: 'Unlimited quotes, priority support, early access to new features.',
+          priceSpecification: {
+            '@type': 'UnitPriceSpecification',
+            price: '15',
+            priceCurrency: 'CAD',
+            referenceQuantity: { '@type': 'QuantitativeValue', value: 1, unitText: 'month' },
+          },
+        },
+      ],
+      featureList: [
+        'AI job description parsing (Claude AI)',
+        'Canadian tax engine (HST, GST, PST, QST for all 13 provinces/territories)',
+        'Branded PDF quote generation',
+        'Direct email delivery to clients',
+        'Client contact management',
+        'Quote status tracking (sent, accepted, declined)',
+      ],
+    },
+    {
+      '@type': 'FAQPage',
+      '@id': `${SITE_URL}/#faq`,
+      mainEntity: FAQS.map(({ q, a }) => ({
+        '@type': 'Question',
+        name: q,
+        acceptedAnswer: { '@type': 'Answer', text: a },
+      })),
+    },
+  ],
+}
+
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-white font-sans">
+
+      {/* ─── JSON-LD Structured Data (SEO + GEO) ─── */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(JSON_LD) }}
+      />
 
       {/* ─── Nav ─── */}
       <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-gray-200">
@@ -227,6 +340,30 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* ─── FAQ ─── */}
+      <section className="py-20 px-4 bg-white" id="faq">
+        <div className="max-w-3xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900">Frequently asked questions</h2>
+            <p className="text-gray-500 mt-3">Everything you need to know before getting started.</p>
+          </div>
+          <div className="space-y-4">
+            {FAQS.map(({ q, a }) => (
+              <details
+                key={q}
+                className="group bg-white border border-gray-200 rounded-xl p-5 open:shadow-sm transition"
+              >
+                <summary className="cursor-pointer list-none flex items-center justify-between gap-4">
+                  <h3 className="font-semibold text-gray-900">{q}</h3>
+                  <span className="text-gray-400 group-open:rotate-180 transition-transform">▾</span>
+                </summary>
+                <p className="text-sm text-gray-600 mt-3 leading-relaxed">{a}</p>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ─── Final CTA ─── */}
       <section className="py-20 px-4 bg-gray-900 text-white text-center">
         <div className="max-w-2xl mx-auto space-y-6">
@@ -248,7 +385,10 @@ export default function LandingPage() {
       <footer className="py-8 px-4 border-t border-gray-200">
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-400">
           <span>⚡ QuickQuote CA — Made in Canada 🇨🇦</span>
-          <div className="flex gap-6">
+          <div className="flex flex-wrap gap-x-6 gap-y-2 justify-center">
+            <Link href="/#faq" className="hover:text-gray-600 transition">FAQ</Link>
+            <Link href="/terms" className="hover:text-gray-600 transition">Terms</Link>
+            <Link href="/privacy" className="hover:text-gray-600 transition">Privacy</Link>
             <Link href="/auth/login" className="hover:text-gray-600 transition">Sign in</Link>
             <Link href="/auth/signup" className="hover:text-gray-600 transition">Sign up</Link>
           </div>
