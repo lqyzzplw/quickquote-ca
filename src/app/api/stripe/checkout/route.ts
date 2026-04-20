@@ -49,7 +49,15 @@ export async function POST() {
       metadata: { supabase_user_id: user.id },
     },
     allow_promotion_codes: true,
-    billing_address_collection: 'auto',
+    // Address collection is required for Stripe Tax to calculate GST/HST/PST/QST
+    billing_address_collection: 'required',
+    // Enable Stripe Tax: auto-calculates Canadian sales tax based on the
+    // customer's billing address (and our head office = Ontario)
+    automatic_tax: { enabled: true },
+    // Persist the captured address on the Customer so tax keeps working on renewals
+    customer_update: { address: 'auto', name: 'auto' },
+    // Let B2B customers enter a GST/HST number (optional, helps with reverse charge)
+    tax_id_collection: { enabled: true },
   })
 
   return NextResponse.json({ url: session.url })
