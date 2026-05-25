@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { POSTS } from './blog/posts'
 
 export const metadata = {
   title: 'QuickQuote CA — Professional Quotes for Canadian Tradespeople',
@@ -168,6 +169,9 @@ export default function LandingPage() {
             <span>⚡</span> QuickQuote CA
           </Link>
           <div className="flex items-center gap-3">
+            <Link href="/blog" className="text-sm text-gray-600 hover:text-gray-900 transition hidden sm:inline">
+              Blog
+            </Link>
             <Link href="/auth/login" className="text-sm text-gray-600 hover:text-gray-900 transition">
               Sign in
             </Link>
@@ -269,6 +273,32 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* ─── Trust band (Canadian tradespeople-specific signals) ─── */}
+      <section className="py-14 px-4 bg-white border-y border-gray-100">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-8">
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest">Why Canadian tradespeople trust QuickQuote</p>
+          </div>
+          <div className="grid sm:grid-cols-3 gap-6 text-center">
+            <div className="space-y-1">
+              <div className="text-2xl">🇨🇦</div>
+              <h3 className="font-semibold text-gray-900 text-sm">Data stays in Canada</h3>
+              <p className="text-xs text-gray-500 leading-relaxed">Supabase ca-central-1 (Toronto). Your client info never leaves Canadian jurisdiction.</p>
+            </div>
+            <div className="space-y-1">
+              <div className="text-2xl">🛡️</div>
+              <h3 className="font-semibold text-gray-900 text-sm">PIPEDA compliant</h3>
+              <p className="text-xs text-gray-500 leading-relaxed">Built to Canadian privacy law from day one. No surprise data shares.</p>
+            </div>
+            <div className="space-y-1">
+              <div className="text-2xl">🚫</div>
+              <h3 className="font-semibold text-gray-900 text-sm">Never trains AI on your data</h3>
+              <p className="text-xs text-gray-500 leading-relaxed">Your quotes, clients, and job notes are never used to train any AI model. Ever.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ─── Pricing ─── */}
       <section className="py-20 px-4" id="pricing">
         <div className="max-w-3xl mx-auto">
@@ -364,6 +394,33 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* ─── From the blog ─── */}
+      {POSTS.length > 0 && (
+        <section className="py-16 px-4 bg-gray-50 border-y border-gray-200">
+          <div className="max-w-3xl mx-auto">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-gray-900">From the blog</h2>
+              <Link href="/blog" className="text-sm text-blue-600 hover:underline">All posts →</Link>
+            </div>
+            <div className="space-y-4">
+              {POSTS.slice(0, 2).map((p) => (
+                <Link
+                  key={p.slug}
+                  href={`/blog/${p.slug}`}
+                  className="block bg-white border border-gray-200 rounded-xl p-5 hover:border-blue-200 hover:shadow-sm transition"
+                >
+                  <div className="text-xs text-gray-400 mb-1">
+                    {new Date(p.publishedAt).toLocaleDateString('en-CA', { year: 'numeric', month: 'long', day: 'numeric' })} · {p.readingMinutes} min read
+                  </div>
+                  <h3 className="font-semibold text-gray-900 hover:text-blue-600 transition">{p.title}</h3>
+                  <p className="text-sm text-gray-600 mt-1.5 line-clamp-2">{p.description}</p>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* ─── Final CTA ─── */}
       <section className="py-20 px-4 bg-gray-900 text-white text-center">
         <div className="max-w-2xl mx-auto space-y-6">
@@ -386,6 +443,7 @@ export default function LandingPage() {
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-400">
           <span>⚡ QuickQuote CA — Made in Canada 🇨🇦</span>
           <div className="flex flex-wrap gap-x-6 gap-y-2 justify-center">
+            <Link href="/blog" className="hover:text-gray-600 transition">Blog</Link>
             <Link href="/#faq" className="hover:text-gray-600 transition">FAQ</Link>
             <Link href="/terms" className="hover:text-gray-600 transition">Terms</Link>
             <Link href="/privacy" className="hover:text-gray-600 transition">Privacy</Link>
