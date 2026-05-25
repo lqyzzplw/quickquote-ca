@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { POSTS } from './blog/posts'
+import HeroDemo from '@/components/HeroDemo'
 
 export const metadata = {
   title: 'QuickQuote CA — Professional Quotes for Canadian Tradespeople',
@@ -185,34 +186,42 @@ export default function LandingPage() {
         </div>
       </nav>
 
-      {/* ─── Hero ─── */}
-      <section className="pt-16 pb-20 px-4 text-center bg-gradient-to-b from-blue-50 to-white">
-        <div className="max-w-3xl mx-auto space-y-6">
-          <div className="inline-block bg-blue-100 text-blue-700 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wide">
-            Built for Canadian Trades
+      {/* ─── Hero (split: text left, animated demo right) ─── */}
+      <section className="pt-16 pb-24 px-4 bg-gradient-to-b from-blue-50 to-white overflow-hidden">
+        <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 lg:gap-16 items-center">
+          {/* Left: copy */}
+          <div className="space-y-6 text-center md:text-left">
+            <div className="inline-block bg-blue-100 text-blue-700 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wide">
+              Built for Canadian Trades
+            </div>
+            <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 leading-tight">
+              Professional quotes in{' '}
+              <span className="text-blue-600">under 60 seconds</span>
+            </h1>
+            <p className="text-lg text-gray-600 max-w-xl mx-auto md:mx-0">
+              Describe the job. AI builds the line items. Canadian taxes calculate automatically. Branded PDF emails to your client — all from your phone.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center md:justify-start pt-2">
+              <Link
+                href="/auth/signup"
+                className="bg-blue-600 text-white font-semibold px-8 py-3.5 rounded-xl hover:bg-blue-700 transition text-base"
+              >
+                Start free — 3 quotes/month
+              </Link>
+              <Link
+                href="#pricing"
+                className="border border-gray-300 text-gray-700 font-medium px-8 py-3.5 rounded-xl hover:bg-gray-50 transition text-base"
+              >
+                See pricing
+              </Link>
+            </div>
+            <p className="text-xs text-gray-400">No credit card required. Cancel anytime.</p>
           </div>
-          <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 leading-tight">
-            Professional quotes in{' '}
-            <span className="text-blue-600">under 60 seconds</span>
-          </h1>
-          <p className="text-lg text-gray-600 max-w-xl mx-auto">
-            Describe the job, get an itemised quote with the right Canadian taxes, and email a branded PDF to your client — all from your phone.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
-            <Link
-              href="/auth/signup"
-              className="bg-blue-600 text-white font-semibold px-8 py-3.5 rounded-xl hover:bg-blue-700 transition text-base"
-            >
-              Start free — 3 quotes/month
-            </Link>
-            <Link
-              href="#pricing"
-              className="border border-gray-300 text-gray-700 font-medium px-8 py-3.5 rounded-xl hover:bg-gray-50 transition text-base"
-            >
-              See pricing
-            </Link>
+
+          {/* Right: live demo */}
+          <div className="pt-4 md:pt-0">
+            <HeroDemo />
           </div>
-          <p className="text-xs text-gray-400">No credit card required to start.</p>
         </div>
       </section>
 
