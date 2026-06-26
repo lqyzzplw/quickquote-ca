@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>小红书 Cover #1 — Indie Hacker</title>
+<style>
+  /* 小红书 cover ratio: 3:4 (1080 × 1440).
+     Open in Chrome → DevTools → Device toolbar → Responsive
+     → Set viewport 1080 × 1440 → Cmd+Shift+P → "Capture full size screenshot". */
+
+  :root {
+    --ink:    #0a0a0a;
+    --bg:     #fafaf7;
+    --accent: #2563eb;     /* QuickQuote blue */
+    --green:  #16a34a;
+    --muted:  #71717a;
+    --line:   #e5e5e5;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    width: 1080px;
+    height: 1440px;
+    font-family: -apple-system, "PingFang SC", "Heiti SC", "Microsoft YaHei", system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .canvas {
+    width: 100%;
+    height: 100%;
+    padding: 90px 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Top tag */
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--ink);
+    color: var(--bg);
+    padding: 14px 28px;
+    border-radius: 999px;
+    font-size: 28px;
+    font-weight: 600;
+    width: fit-content;
+    letter-spacing: 0.02em;
+  }
+  .tag .dot {
+    width: 12px;
+    height: 12px;
+    background: var(--green);
+    border-radius: 50%;
+    box-shadow: 0 0 0 6px rgba(22, 163, 74, 0.2);
+  }
+
+  /* Main headline */
+  .headline {
+    margin-top: 60px;
+    font-size: 132px;
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+  }
+  .headline .accent {
+    color: var(--accent);
+    position: relative;
+    display: inline-block;
+  }
+  .headline .accent::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 8px;
+    height: 16px;
+    background: rgba(37, 99, 235, 0.18);
+    z-index: -1;
+  }
+
+  .subhead {
+    margin-top: 36px;
+    font-size: 42px;
+    color: var(--muted);
+    font-weight: 500;
+    line-height: 1.4;
+  }
+
+  /* Stats grid */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: auto;
+    padding-top: 60px;
+  }
+  .stat {
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 28px;
+    padding: 36px 28px;
+    text-align: left;
+  }
+  .stat .label {
+    font-size: 24px;
+    color: var(--muted);
+    font-weight: 500;
+    margin-bottom: 12px;
+  }
+  .stat .value {
+    font-size: 64px;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .stat .unit {
+    font-size: 32px;
+    color: var(--muted);
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .stat.zero .value { color: var(--accent); }
+
+  /* Footer brand */
+  .brand {
+    margin-top: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 28px;
+    color: var(--muted);
+    font-weight: 500;
+  }
+  .brand .name {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  /* Background decoration */
+  .deco {
+    position: absolute;
+    top: -120px;
+    right: -120px;
+    width: 480px;
+    height: 480px;
+    background: radial-gradient(circle, rgba(37, 99, 235, 0.08) 0%, transparent 70%);
+    border-radius: 50%;
+    z-index: 0;
+  }
+  .canvas > * { position: relative; z-index: 1; }
+</style>
+</head>
+<body>
+  <div class="canvas">
+    <div class="deco"></div>
+
+    <div>
+      <div class="tag">
+        <span class="dot"></span>
+        全职独立开发 · Week 4 实录
+      </div>
+
+      <h1 class="headline">
+        上线了，<br>
+        但 <span class="accent">0 用户</span>。
+      </h1>
+
+      <p class="subhead">
+        全 solo · 4 个周末 · $0 成本<br>
+        Bootstrap 一个加拿大 SaaS 的真实复盘
+      </p>
+    </div>
+
+    <div>
+      <div class="stats">
+        <div class="stat">
+          <div class="label">开发时间</div>
+          <div class="value">28<span class="unit">小时</span></div>
+        </div>
+        <div class="stat">
+          <div class="label">总成本</div>
+          <div class="value">$0</div>
+        </div>
+        <div class="stat zero">
+          <div class="label">当前用户</div>
+          <div class="value">1<span class="unit">个</span></div>
+        </div>
+      </div>
+
+      <div class="brand">
+        <div class="name">⚡ QuickQuote CA</div>
+        <div>👉 评论区聊聊</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
