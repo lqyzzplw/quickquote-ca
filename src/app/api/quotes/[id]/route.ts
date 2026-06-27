@@ -27,13 +27,13 @@ export async function PATCH(request: Request, { params }: { params: { id: string
   const { status } = body
 
   const allowed = ['draft', 'sent', 'accepted', 'declined']
-  if (status && !allowed.includes(status)) {
+  if (!status || !allowed.includes(status)) {
     return NextResponse.json({ error: 'Invalid status' }, { status: 400 })
   }
 
   const { data, error } = await supabase
     .from('quotes')
-    .update({ ...body })
+    .update({ status })   // whitelist: never spread the raw request body
     .eq('id', params.id)
     .eq('user_id', user.id)
     .select()
