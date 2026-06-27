@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { adminClient } from '@/lib/supabase/admin'
+import { getAdminClient } from '@/lib/supabase/admin'
 import { calculateTax } from '@/lib/tax'
 import type { Province } from '@/lib/tax'
 
@@ -62,7 +62,7 @@ export async function POST(request: Request) {
   }
 
   // Generate quote number via RPC
-  const { data: quoteNumber } = await adminClient
+  const { data: quoteNumber } = await getAdminClient()
     .rpc('next_quote_number')
   const finalQuoteNumber = (quoteNumber as string) ?? `QQ-${Date.now()}`
 

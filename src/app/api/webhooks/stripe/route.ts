@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
-import { stripe } from '@/lib/stripe'
-import { adminClient } from '@/lib/supabase/admin'
+import { getStripe } from '@/lib/stripe'
+import { getAdminClient } from '@/lib/supabase/admin'
 import type Stripe from 'stripe'
 
 export async function POST(request: Request) {
@@ -20,7 +20,7 @@ export async function POST(request: Request) {
   let event: Stripe.Event
 
   try {
-    event = stripe.webhooks.constructEvent(body, signature, process.env.STRIPE_WEBHOOK_SECRET)
+    event = getStripe().webhooks.constructEvent(body, signature, process.env.STRIPE_WEBHOOK_SECRET)
   } catch (err) {
     console.error('Webhook signature verification failed:', err)
     return NextResponse.json({ error: 'Invalid signature' }, { status: 400 })
@@ -34,7 +34,7 @@ export async function POST(request: Request) {
         const userId = session.metadata?.supabase_user_id
 
         if (userId && session.subscription) {
-          await adminClient
+          await getAdminClient()
             .from('users')
             .update({
               plan: 'pro',
@@ -51,7 +51,7 @@ export async function POST(request: Request) {
 
         if (userId) {
           const isActive = ['active', 'trialing'].includes(sub.status)
-          await adminClient
+          await getAdminClient()
             .from('users')
             .update({
               plan: isActive ? 'pro' : 'free',
@@ -67,7 +67,7 @@ export async function POST(request: Request) {
         const userId = sub.metadata?.supabase_user_id
 
         if (userId) {
-          await adminClient
+          await getAdminClient()
             .from('users')
             .update({ plan: 'free', stripe_subscription_id: null })
             .eq('id', userId)

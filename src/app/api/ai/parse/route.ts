@@ -1,9 +1,13 @@
 import Anthropic from '@anthropic-ai/sdk'
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { adminClient } from '@/lib/supabase/admin'
+import { getAdminClient } from '@/lib/supabase/admin'
 
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+let _anthropic: Anthropic | null = null
+function getAnthropic(): Anthropic {
+  if (!_anthropic) _anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+  return _anthropic
+}
 
 // Coarse per-user daily cap so a logged-in user can't drain the Anthropic
 // budget. Counter columns live on users (M4 migration). Fails OPEN if the
@@ -24,7 +28,7 @@ export async function POST(request: Request) {
 
   // Per-user daily rate limit (M4)
   const todayStr = new Date().toISOString().split('T')[0]
-  const { data: usage, error: usageErr } = await adminClient
+  const { data: usage, error: usageErr } = await getAdminClient()
     .from('users')
     .select('ai_parses_today, ai_parses_date')
     .eq('id', user.id)
@@ -39,14 +43,14 @@ export async function POST(request: Request) {
         { status: 429 }
       )
     }
-    await adminClient
+    await getAdminClient()
       .from('users')
       .update({ ai_parses_today: usedToday + 1, ai_parses_date: todayStr })
       .eq('id', user.id)
   }
 
   try {
-    const message = await anthropic.messages.create({
+    const message = await getAnthropic().messages.create({
       model: 'claude-haiku-4-5',
       max_tokens: 1024,
       messages: [
