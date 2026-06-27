@@ -34,12 +34,32 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'At least one line item is required' }, { status: 400 })
   }
 
+  // Validate every line item is a sane number (M5)
+  for (const item of line_items as { description?: string; quantity: number; unit_price: number }[]) {
+    const q = Number(item.quantity)
+    const p = Number(item.unit_price)
+    if (!item.description?.trim() || !Number.isFinite(q) || q <= 0 || !Number.isFinite(p) || p < 0) {
+      return NextResponse.json(
+        { error: 'Each line item needs a description, a positive quantity, and a non-negative price.' },
+        { status: 400 }
+      )
+    }
+  }
+
   // Get user's province for tax calculation
   const { data: profile } = await supabase
     .from('users')
     .select('province, plan, quotes_sent_this_month')
     .eq('id', user.id)
     .single()
+
+  // Require province so tax is always applied correctly (M2)
+  if (!profile?.province) {
+    return NextResponse.json(
+      { error: 'Set your province in Settings before creating quotes — it determines the tax applied.' },
+      { status: 400 }
+    )
+  }
 
   // Generate quote number via RPC
   const { data: quoteNumber } = await adminClient
@@ -53,16 +73,10 @@ export async function POST(request: Request) {
     0
   )
 
-  let taxAmount = 0
-  let taxType = null
-  let taxRate = null
-
-  if (profile?.province) {
-    const tax = calculateTax(subtotal, profile.province as Province)
-    taxAmount = tax.taxAmount
-    taxType = tax.taxType
-    taxRate = tax.lines.reduce((sum, l) => sum + l.rate, 0)
-  }
+  const tax = calculateTax(subtotal, profile.province as Province)
+  const taxAmount = tax.taxAmount
+  const taxType = tax.taxType
+  const taxRate = tax.lines.reduce((sum, l) => sum + l.rate, 0)
 
   const total = subtotal + taxAmount
   const expiresAt = new Date()
