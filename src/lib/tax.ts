@@ -21,7 +21,7 @@ const TAX_CONFIG: Record<Province, TaxConfig> = {
   // HST provinces
   ON:  { type: 'HST',     lines: [{ name: 'HST', rate: 0.13 }] },
   NB:  { type: 'HST',     lines: [{ name: 'HST', rate: 0.15 }] },
-  NS:  { type: 'HST',     lines: [{ name: 'HST', rate: 0.15 }] },
+  NS:  { type: 'HST',     lines: [{ name: 'HST', rate: 0.14 }] },  // 14% since 2025-04-01
   NL:  { type: 'HST',     lines: [{ name: 'HST', rate: 0.15 }] },
   PEI: { type: 'HST',     lines: [{ name: 'HST', rate: 0.15 }] },
   // GST + PST

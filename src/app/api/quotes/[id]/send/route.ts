@@ -35,12 +35,19 @@ export async function POST(_req: Request, { params }: { params: { id: string } }
   // Fetch user profile for PDF
   const { data: profile } = await supabase
     .from('users')
-    .select('name, business_name, province, plan, quotes_sent_this_month')
+    .select('name, business_name, province, plan, quotes_sent_this_month, billing_cycle_start')
     .eq('id', user.id)
     .single()
 
-  // Freemium gate — enforce server-side
-  if (profile?.plan === 'free' && (profile?.quotes_sent_this_month ?? 0) >= 3) {
+  // Monthly freemium gate — reset the counter when the billing cycle has rolled over (H2)
+  const today = new Date()
+  const cycleStart = profile?.billing_cycle_start ? new Date(profile.billing_cycle_start) : null
+  const cycleExpired =
+    !cycleStart ||
+    today >= new Date(cycleStart.getFullYear(), cycleStart.getMonth() + 1, cycleStart.getDate())
+  const usedThisCycle = cycleExpired ? 0 : (profile?.quotes_sent_this_month ?? 0)
+
+  if (profile?.plan === 'free' && usedThisCycle >= 3) {
     return NextResponse.json({
       error: 'Free plan limit reached (3 quotes/month). Upgrade to Pro to send more.',
       upgrade: true,
@@ -66,7 +73,7 @@ export async function POST(_req: Request, { params }: { params: { id: string } }
   // Send email via Resend
   const businessName = profile?.business_name ?? profile?.name ?? 'Your contractor'
   const { error: emailErr } = await resend.emails.send({
-    from: 'QuickQuote CA <onboarding@resend.dev>',
+    from: `QuickQuote CA <${process.env.RESEND_FROM_EMAIL ?? 'onboarding@resend.dev'}>`,
     to: [client.email],
     subject: `Quote ${quote.quote_number} from ${businessName}`,
     html: `
@@ -100,16 +107,23 @@ export async function POST(_req: Request, { params }: { params: { id: string } }
     return NextResponse.json({ error: 'Failed to send email' }, { status: 500 })
   }
 
-  // Update quote status + sent_at using admin client to bypass RLS on counter
-  await supabase
+  // Update quote status + sent_at (L6: surface the error instead of swallowing it)
+  const { error: statusErr } = await supabase
     .from('quotes')
     .update({ status: 'sent', sent_at: new Date().toISOString() })
     .eq('id', params.id)
+    .eq('user_id', user.id)
+  if (statusErr) console.error('Quote status update failed after send:', statusErr)
 
-  // Increment monthly counter
+  // Increment the cycle counter, resetting the window if the cycle expired (H2)
   await adminClient
     .from('users')
-    .update({ quotes_sent_this_month: (profile?.quotes_sent_this_month ?? 0) + 1 })
+    .update({
+      quotes_sent_this_month: usedThisCycle + 1,
+      billing_cycle_start: cycleExpired
+        ? today.toISOString().split('T')[0]
+        : (profile?.billing_cycle_start ?? today.toISOString().split('T')[0]),
+    })
     .eq('id', user.id)
 
   return NextResponse.json({ data: { success: true } })

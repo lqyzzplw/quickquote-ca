@@ -1,8 +1,15 @@
 import Anthropic from '@anthropic-ai/sdk'
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { adminClient } from '@/lib/supabase/admin'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+
+// Coarse per-user daily cap so a logged-in user can't drain the Anthropic
+// budget. Counter columns live on users (M4 migration). Fails OPEN if the
+// columns aren't migrated yet, so deploying code before the migration degrades
+// to "no limit" (logged) rather than breaking parsing.
+const AI_PARSE_DAILY_CAP = Number(process.env.AI_PARSE_DAILY_CAP ?? 40)
 
 export async function POST(request: Request) {
   // Auth check
@@ -13,6 +20,29 @@ export async function POST(request: Request) {
   const { description, province } = await request.json()
   if (!description?.trim()) {
     return NextResponse.json({ error: 'Description is required' }, { status: 400 })
+  }
+
+  // Per-user daily rate limit (M4)
+  const todayStr = new Date().toISOString().split('T')[0]
+  const { data: usage, error: usageErr } = await adminClient
+    .from('users')
+    .select('ai_parses_today, ai_parses_date')
+    .eq('id', user.id)
+    .single()
+  if (usageErr) {
+    console.warn('AI parse rate-limit check skipped (run the M4 migration?):', usageErr.message)
+  } else {
+    const usedToday = usage?.ai_parses_date === todayStr ? (usage.ai_parses_today ?? 0) : 0
+    if (usedToday >= AI_PARSE_DAILY_CAP) {
+      return NextResponse.json(
+        { error: 'Daily AI limit reached. Fill in the quote manually or try again tomorrow.' },
+        { status: 429 }
+      )
+    }
+    await adminClient
+      .from('users')
+      .update({ ai_parses_today: usedToday + 1, ai_parses_date: todayStr })
+      .eq('id', user.id)
   }
 
   try {
