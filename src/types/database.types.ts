@@ -13,6 +13,8 @@ export type Database = {
           province: string | null
           plan: string
           quotes_sent_this_month: number
+          ai_parses_today: number
+          ai_parses_date: string | null
           billing_cycle_start: string | null
           stripe_customer_id: string | null
           stripe_subscription_id: string | null
@@ -28,6 +30,8 @@ export type Database = {
           province?: string | null
           plan?: string
           quotes_sent_this_month?: number
+          ai_parses_today?: number
+          ai_parses_date?: string | null
           billing_cycle_start?: string | null
           stripe_customer_id?: string | null
           stripe_subscription_id?: string | null
@@ -43,6 +47,8 @@ export type Database = {
           province?: string | null
           plan?: string
           quotes_sent_this_month?: number
+          ai_parses_today?: number
+          ai_parses_date?: string | null
           billing_cycle_start?: string | null
           stripe_customer_id?: string | null
           stripe_subscription_id?: string | null
