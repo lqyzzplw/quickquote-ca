@@ -1,11 +1,15 @@
 import { NextResponse } from 'next/server'
 import { Resend } from 'resend'
 import { createClient } from '@/lib/supabase/server'
-import { adminClient } from '@/lib/supabase/admin'
+import { getAdminClient } from '@/lib/supabase/admin'
 import { generateQuotePDF, type PDFClient } from '@/lib/pdf'
 import type { Quote, User } from '@/types'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+let _resend: Resend | null = null
+function getResend(): Resend {
+  if (!_resend) _resend = new Resend(process.env.RESEND_API_KEY)
+  return _resend
+}
 
 export async function POST(_req: Request, { params }: { params: { id: string } }) {
   const supabase = createClient()
@@ -72,7 +76,7 @@ export async function POST(_req: Request, { params }: { params: { id: string } }
 
   // Send email via Resend
   const businessName = profile?.business_name ?? profile?.name ?? 'Your contractor'
-  const { error: emailErr } = await resend.emails.send({
+  const { error: emailErr } = await getResend().emails.send({
     from: `QuickQuote CA <${process.env.RESEND_FROM_EMAIL ?? 'onboarding@resend.dev'}>`,
     to: [client.email],
     subject: `Quote ${quote.quote_number} from ${businessName}`,
@@ -116,7 +120,7 @@ export async function POST(_req: Request, { params }: { params: { id: string } }
   if (statusErr) console.error('Quote status update failed after send:', statusErr)
 
   // Increment the cycle counter, resetting the window if the cycle expired (H2)
-  await adminClient
+  await getAdminClient()
     .from('users')
     .update({
       quotes_sent_this_month: usedThisCycle + 1,
