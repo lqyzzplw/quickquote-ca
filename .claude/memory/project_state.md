@@ -16,7 +16,7 @@
 
 ## Last Session (2026-04-14)
 - Phase 4 shipped: Stripe checkout API, webhook handler, /upgrade page, /upgrade/success page, landing page (/)
-- STRIPE_WEBHOOK_SECRET saved to .env.local (whsec_[PURGED-2026-07-22])
+- STRIPE_WEBHOOK_SECRET saved to .env.local ([REDACTED — leaked value rotated 2026-07-22; live secret lives only in Vercel env & .env.local])
 - Stripe API version updated to 2026-03-25.dahlia (SDK latest)
 - webhook: checkout.session.completed uses session.metadata.supabase_user_id
 - Build passes clean — 20 routes
